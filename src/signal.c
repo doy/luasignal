@@ -129,6 +129,10 @@ static int l_alarm(lua_State* L)
 const luaL_Reg reg[] = {
     { "signal",  l_signal  },
     { "alarm",   l_alarm   },
+    /*{ "kill",    l_kill    },*/
+    /*{ "raise",   l_raise   },*/
+    /*{ "suspend", l_suspend },*/
+    /*{ "block",   l_block   },*/
     {  NULL,     NULL      },
 };
 
