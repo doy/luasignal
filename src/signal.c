@@ -63,7 +63,8 @@ static int l_signal(lua_State* L)
 
     gL = L;
 
-    signame = luaL_checkstring(L, 1);
+    luaL_checktype(L, 1, LUA_TSTRING);
+    signame = lua_tostring(L, 1);
     sig = name_to_sig(signame);
     if (sig == -1) {
         lua_pushfstring(L, "signal() called with invalid signal name: %s", signame);
@@ -120,7 +121,7 @@ static int l_alarm(lua_State* L)
 {
     int time;
 
-    time = luaL_checkint(L, -1);
+    time = luaL_checkint(L, 1);
     lua_pushinteger(L, alarm(time));
 
     return 1;
@@ -131,8 +132,9 @@ static int l_kill(lua_State* L)
     const char* signame;
     int pid, sig;
 
-    pid = luaL_checkint(L, -1);
-    signame = luaL_checkstring(L, -2);
+    pid = luaL_checkint(L, 1);
+    luaL_checktype(L, 2, LUA_TSTRING);
+    signame = lua_tostring(L, 2);
     if ((sig = name_to_sig(signame)) == -1) {
         if (strcmp(signame, "test") == 0) {
             sig = 0;
@@ -153,7 +155,8 @@ static int l_raise(lua_State* L)
     const char* signame;
     int sig;
 
-    signame = luaL_checkstring(L, -1);
+    luaL_checktype(L, 1, LUA_TSTRING);
+    signame = lua_tostring(L, 1);
     if ((sig = name_to_sig(signame)) == -1) {
         if (strcmp(signame, "test") == 0) {
             sig = 0;
