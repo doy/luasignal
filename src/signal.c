@@ -159,7 +159,7 @@ static int l_raise(lua_State* L)
             sig = 0;
         }
         else {
-            lua_pushstring(L, "raise(): invalid signal name");
+            lua_pushfstring(L, "raise(): invalid signal name: %s", signame);
             lua_error(L);
         }
     }
