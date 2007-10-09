@@ -63,23 +63,23 @@ static int l_signal(lua_State* L)
 
     gL = L;
 
-    signame = luaL_checklstring(gL, 1, NULL);
+    signame = luaL_checklstring(L, 1, NULL);
     sig = name_to_sig(signame);
     if (sig == -1) {
-        lua_pushfstring(gL, "signal() called with invalid signal name: %s", signame);
-        lua_error(gL);
+        lua_pushfstring(L, "signal() called with invalid signal name: %s", signame);
+        lua_error(L);
     }
 
-    if (lua_isfunction(gL, 2)) {
+    if (lua_isfunction(L, 2)) {
         handler = signal_handler;
-        lua_getfield(gL, LUA_REGISTRYINDEX, REG_TABLE);
-        lua_pushvalue(gL, 2);
-        lua_setfield(gL, -2, signame);
+        lua_getfield(L, LUA_REGISTRYINDEX, REG_TABLE);
+        lua_pushvalue(L, 2);
+        lua_setfield(L, -2, signame);
     }
-    else if (lua_isstring(gL, 2)) {
+    else if (lua_isstring(L, 2)) {
         const char* pseudo_handler;
 
-        pseudo_handler = lua_tostring(gL, 2);
+        pseudo_handler = lua_tostring(L, 2);
         if (strcmp(pseudo_handler, "ignore") == 0) {
             handler = SIG_IGN;
         }
@@ -95,13 +95,13 @@ static int l_signal(lua_State* L)
             }
         }
         else {
-            lua_pushstring(gL, "Must pass a valid handler to signal()");
-            lua_error(gL);
+            lua_pushstring(L, "Must pass a valid handler to signal()");
+            lua_error(L);
         }
     }
     else {
-        lua_pushstring(gL, "Must pass a handler to signal()");
-        lua_error(gL);
+        lua_pushstring(L, "Must pass a handler to signal()");
+        lua_error(L);
     }
     sa.sa_handler = handler;
     sigfillset(&sset);
