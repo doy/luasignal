@@ -16,4 +16,6 @@ for i = 1, N do end
 signal.signal("INT", "default")
 print("Running now with Lua's default SIGINT handler...")
 for i = 1, N do end
+print("Exiting by raising a fatal error")
+signal.raise("TERM")
 print("Done!")
