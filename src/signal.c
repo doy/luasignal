@@ -228,13 +228,87 @@ static int l_suspend(lua_State* L)
     return 0;
 }
 
+static int l_mask(lua_State* L)
+{
+    const char* str_how = NULL;
+    int how = SIG_BLOCK, first_arg = 2;
+    sigset_t sset;
+
+    luaL_checktype(L, 1, LUA_TSTRING);
+    str_how = lua_tostring(L, 1);
+    if (strcmp(str_how, "block") == 0) {
+        how = SIG_BLOCK;
+    }
+    else if (strcmp(str_how, "unblock") == 0) {
+        how = SIG_UNBLOCK;
+    }
+    else if (strcmp(str_how, "set") == 0) {
+        how = SIG_SETMASK;
+    }
+    else {
+        lua_pushfstring(L, "mask(): invalid masking method: %s", str_how);
+        lua_error(L);
+    }
+
+    sigprocmask(0, NULL, &sset);
+    if (lua_isstring(L, 2)) {
+        const char* init;
+
+        init = lua_tostring(L, 2);
+        if (strcmp(init, "all") == 0) {
+            sigfillset(&sset);
+        }
+        else if (strcmp(init, "none") == 0) {
+            sigemptyset(&sset);
+        }
+        else if (strcmp(init, "cur") != 0) {
+            lua_pushfstring(L, "suspend(): invalid sigset initializer: %s", init);
+            lua_error(L);
+        }
+        first_arg = 3;
+    }
+
+    luaL_checktype(L, first_arg,     LUA_TTABLE);
+    luaL_checktype(L, first_arg + 1, LUA_TTABLE);
+
+    lua_pushnil(L);
+    while (lua_next(L, first_arg) != 0) {
+        if (lua_isstring(L, -1)) {
+            int sig;
+
+            sig = name_to_sig(lua_tostring(L, -1));
+            if (sig != -1) {
+                sigaddset(&sset, sig);
+            }
+        }
+        lua_pop(L, 1);
+    }
+    lua_pushnil(L);
+    while (lua_next(L, first_arg + 1) != 0) {
+        if (lua_isstring(L, -1)) {
+            int sig;
+
+            sig = name_to_sig(lua_tostring(L, -1));
+            if (sig != -1) {
+                sigdelset(&sset, sig);
+            }
+        }
+        lua_pop(L, 1);
+    }
+
+    /* XXX: we should return oldset here rather than ignoring it */
+    sigprocmask(how, &sset, NULL);
+
+    return 0;
+}
+
 const luaL_Reg reg[] = {
     { "signal",  l_signal  },
     { "alarm",   l_alarm   },
     { "kill",    l_kill    },
     { "raise",   l_raise   },
     { "suspend", l_suspend },
-    /*{ "block",   l_block   },*/
+    { "mask",    l_mask    },
     {  NULL,     NULL      },
 };
 
