@@ -4,6 +4,7 @@
 #include <lauxlib.h>
 #include <signal.h>
 #include <string.h>
+#include <unistd.h>
 
 #define REG_TABLE "luasignal"
 
@@ -115,9 +116,20 @@ static int l_signal(lua_State* L)
     return 0;
 }
 
+static int l_alarm(lua_State* L)
+{
+    int time;
+
+    time = luaL_checkint(L, -1);
+    lua_pushinteger(L, alarm(time));
+
+    return 1;
+}
+
 const luaL_Reg reg[] = {
-    { "signal", l_signal },
-    { NULL,     NULL },
+    { "signal",  l_signal  },
+    { "alarm",   l_alarm   },
+    {  NULL,     NULL      },
 };
 
 int luaopen_signal(lua_State* L)
