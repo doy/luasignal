@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #define REG_TABLE "luasignal"
+#define VERSION "LuaSignal 0.1"
 
 static lua_State* gL = NULL;
 static lua_Hook old_hook = NULL;
@@ -322,6 +323,8 @@ int luaopen_signal(lua_State* L)
     lua_setfield(L, LUA_REGISTRYINDEX, REG_TABLE);
 
     luaL_register(L, "signal", reg);
+    lua_pushstring(L, VERSION);
+    lua_setfield(L, -2, "_VERSION");
 
     return 1;
 }
