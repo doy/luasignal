@@ -172,12 +172,68 @@ static int l_raise(lua_State* L)
     return 1;
 }
 
+static int l_suspend(lua_State* L)
+{
+    sigset_t sset;
+    int first_arg = 1;
+
+    sigprocmask(0, NULL, &sset);
+    if (lua_isstring(L, 1)) {
+        const char* init;
+
+        init = lua_tostring(L, 1);
+        if (strcmp(init, "all") == 0) {
+            sigfillset(&sset);
+        }
+        else if (strcmp(init, "none") == 0) {
+            sigemptyset(&sset);
+        }
+        else if (strcmp(init, "cur") != 0) {
+            lua_pushfstring(L, "suspend(): invalid sigset initializer: %s", init);
+            lua_error(L);
+        }
+        first_arg = 2;
+    }
+
+    luaL_checktype(L, first_arg,     LUA_TTABLE);
+    luaL_checktype(L, first_arg + 1, LUA_TTABLE);
+
+    lua_pushnil(L);
+    while (lua_next(L, first_arg) != 0) {
+        if (lua_isstring(L, -1)) {
+            int sig;
+
+            sig = name_to_sig(lua_tostring(L, -1));
+            if (sig != -1) {
+                sigaddset(&sset, sig);
+            }
+        }
+        lua_pop(L, 1);
+    }
+    lua_pushnil(L);
+    while (lua_next(L, first_arg + 1) != 0) {
+        if (lua_isstring(L, -1)) {
+            int sig;
+
+            sig = name_to_sig(lua_tostring(L, -1));
+            if (sig != -1) {
+                sigdelset(&sset, sig);
+            }
+        }
+        lua_pop(L, 1);
+    }
+
+    sigsuspend(&sset);
+
+    return 0;
+}
+
 const luaL_Reg reg[] = {
     { "signal",  l_signal  },
     { "alarm",   l_alarm   },
     { "kill",    l_kill    },
     { "raise",   l_raise   },
-    /*{ "suspend", l_suspend },*/
+    { "suspend", l_suspend },
     /*{ "block",   l_block   },*/
     {  NULL,     NULL      },
 };
