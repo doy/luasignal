@@ -126,11 +126,54 @@ static int l_alarm(lua_State* L)
     return 1;
 }
 
+static int l_kill(lua_State* L)
+{
+    const char* signame;
+    int pid, sig;
+
+    pid = luaL_checkint(L, -1);
+    signame = luaL_checklstring(L, -2, NULL);
+    if ((sig = name_to_sig(signame)) == -1) {
+        if (strcmp(signame, "test") == 0) {
+            sig = 0;
+        }
+        else {
+            lua_pushstring(L, "kill(): invalid signal name");
+            lua_error(L);
+        }
+    }
+
+    lua_pushinteger(L, kill(pid, sig));
+
+    return 1;
+}
+
+static int l_raise(lua_State* L)
+{
+    const char* signame;
+    int sig;
+
+    signame = luaL_checklstring(L, -1, NULL);
+    if ((sig = name_to_sig(signame)) == -1) {
+        if (strcmp(signame, "test") == 0) {
+            sig = 0;
+        }
+        else {
+            lua_pushstring(L, "raise(): invalid signal name");
+            lua_error(L);
+        }
+    }
+
+    lua_pushinteger(L, raise(sig));
+
+    return 1;
+}
+
 const luaL_Reg reg[] = {
     { "signal",  l_signal  },
     { "alarm",   l_alarm   },
-    /*{ "kill",    l_kill    },*/
-    /*{ "raise",   l_raise   },*/
+    { "kill",    l_kill    },
+    { "raise",   l_raise   },
     /*{ "suspend", l_suspend },*/
     /*{ "block",   l_block   },*/
     {  NULL,     NULL      },
