@@ -2,6 +2,7 @@ require 'signal'
 
 N = 200000000
 
+print("Running under " .. signal._VERSION)
 print("Running before messing with SIGINT")
 for i = 1, N do end
 signal.signal("INT", "ignore")
