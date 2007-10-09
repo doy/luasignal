@@ -177,6 +177,8 @@ static int l_suspend(lua_State* L)
     sigset_t sset;
     int first_arg = 1;
 
+    /* XXX: this should be moved out into a function so that mask() can also
+     * use it */
     sigprocmask(0, NULL, &sset);
     if (lua_isstring(L, 1)) {
         const char* init;
