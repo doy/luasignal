@@ -80,10 +80,10 @@ static int l_signal(lua_State* L)
         if (strcmp(pseudo_handler, "ignore") == 0) {
             handler = SIG_IGN;
         }
-        else if (strcmp(pseudo_handler, "default") == 0) {
+        else if (strcmp(pseudo_handler, "cdefault") == 0) {
             handler = SIG_DFL;
         }
-        else if (strcmp(pseudo_handler, "luadefault") == 0) {
+        else if (strcmp(pseudo_handler, "default") == 0) {
             if (lua_handlers[sig].sa_handler != NULL) {
                 handler = lua_handlers[sig].sa_handler;
             }
