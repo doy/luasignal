@@ -12,6 +12,8 @@ static lua_Hook old_hook = NULL;
 static int old_mask = 0;
 static int old_count = 0;
 static queue q;
+/* hardcoding 256 here is not great... is there a better way to get the highest
+ * numbered signal? */
 static struct sigaction lua_handlers[256];
 
 static void lua_signal_handler(lua_State* L, lua_Debug* D)
