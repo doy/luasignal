@@ -35,7 +35,9 @@ static void lua_signal_handler(lua_State* L, lua_Debug* D)
         lua_getfield(gL, LUA_REGISTRYINDEX, REG_TABLE);
         lua_getfield(gL, -1, signame);
         lua_pushstring(gL, signame);
+        sigprocmask(SIG_SETMASK, &oldset, NULL);
         lua_call(gL, 1, 0);
+        sigprocmask(SIG_BLOCK, &sset, &oldset);
     }
 
     sigprocmask(SIG_SETMASK, &oldset, NULL);
