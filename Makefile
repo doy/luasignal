@@ -5,10 +5,9 @@ OBJ = src/signal.o \
       src/signames.o \
       src/queue.o
 CC = gcc
-INCLUDES =
+INCLUDES = -I$(LUA_INCLUDEPATH)
 DEFINES =
-LIBS = -llua
-# COMMONFLAGS = -fpic -Werror -Wall -pedantic -O0 -g -pipe
+LIBS = -l$(LUA_LIBNAME)
 COMMONFLAGS = -fpic -Werror -Wall -pedantic -O2 -g -pipe
 CFLAGS = -c $(INCLUDES) $(DEFINES) $(COMMONFLAGS)
 LDFLAGS = -shared $(LIBS) $(COMMONFLAGS)
