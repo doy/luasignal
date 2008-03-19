@@ -1,4 +1,5 @@
 include Make.config
+include Make.$(OS)
 
 BIN = src/signal.so
 OBJ = src/signal.o \
@@ -8,7 +9,7 @@ CC = gcc
 INCLUDES = -I$(LUA_INCLUDEPATH)
 DEFINES =
 LIBS = -l$(LUA_LIBNAME)
-COMMONFLAGS = -fpic -Werror -Wall -pedantic -O2 -g -pipe
+COMMONFLAGS = -Werror -Wall -pedantic -O2 -g -pipe $(OS_FLAGS)
 CFLAGS = -c $(INCLUDES) $(DEFINES) $(COMMONFLAGS)
 LDFLAGS = -shared $(LIBS) $(COMMONFLAGS)
 
