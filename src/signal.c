@@ -110,6 +110,7 @@ static int l_signal(lua_State* L)
     sa.sa_handler = handler;
     sigfillset(&sset);
     sa.sa_mask = sset;
+    sa.sa_flags = 0;
     if (lua_handlers[sig].sa_handler == NULL) {
         sigaction(sig, &sa, &(lua_handlers[sig]));
     }
