@@ -7,12 +7,14 @@ const char* sig_to_name(int sig)
 {
     static char signame[7];
 
+#ifdef SIGRTMIN
     if (sig >= SIGRTMIN && sig <= SIGRTMAX) {
         snprintf(signame, 7, "RT%d", sig - SIGRTMIN);
 
         return signame;
     }
     else {
+#endif
         int i;
 
         for (i = 0; i < sizeof(sigs) / sizeof(sigs[0]); ++i) {
@@ -22,11 +24,14 @@ const char* sig_to_name(int sig)
         }
 
         return NULL;
+#ifdef SIGRTMIN
     }
+#endif
 }
 
 int name_to_sig(const char* name)
 {
+#ifdef SIGRTMIN
     if (strncmp(name, "RT", 2) == 0) {
         int rtsig;
 
@@ -35,6 +40,7 @@ int name_to_sig(const char* name)
         return rtsig + SIGRTMIN;
     }
     else {
+#endif
         int i;
 
         for (i = 0; i < sizeof(sigs) / sizeof(sigs[0]); ++i) {
@@ -44,5 +50,7 @@ int name_to_sig(const char* name)
         }
 
         return -1;
+#ifdef SIGRTMIN
     }
+#endif
 }
